@@ -17,7 +17,7 @@ services:
       - postgres
     volumes:
       - .:/usr/src/app
-    command: bash -c "wait-for-it postgres:5432 -- uvicorn report_fastapi:app --host 0.0.0.0 --port 8000"
+    command: bash -c "wait-for-it 64.226.65.160:5432 -- uvicorn report_fastapi:app --host 0.0.0.0 --port 8000"
 
   app:
     build:
@@ -30,10 +30,10 @@ services:
       - redis
     volumes:
       - .:/usr/src/app
-    command: bash -c "wait-for-it postgres:5432 -- python app.py"
+    command: bash -c "wait-for-it 64.226.65.160:5432 -- python app.py"
 
   postgres:
-    image: postgres:16.1
+    image: postgres:latest
     environment:
       POSTGRES_DB: financial_records
       POSTGRES_USER: postgres
