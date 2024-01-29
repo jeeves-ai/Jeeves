@@ -1,4 +1,4 @@
-﻿from jinja2 import Template
+from jinja2 import Template
 
 
 def generate_html_report(financial_records):

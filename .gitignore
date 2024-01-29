@@ -4,3 +4,4 @@ venv/
 .env
 financial_records.db
 .env.docker
+.DS_Store

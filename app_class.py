@@ -81,7 +81,7 @@ class MessageProcessor:
             self.bot = bot
             self.record = {}
             self.answerCall = True
-            self._answer_recieved = Event()
+            self._answer_received = Event()
             self.build_answer_callback()
             self.user_message = user_message
             self.save_data_question_message = None
@@ -99,24 +99,23 @@ class MessageProcessor:
 
     def __getstate__(self):
         state = self.__dict__.copy()
-        # Удаление объектов _asyncio.Future из состояния
         for key, value in list(state.items()):
             if isinstance(value, asyncio.Future):
                 del state[key]
         for key in list(state.keys()):
             if isinstance(state[key], _asyncio.Future):
                 del state[key]
-        if '_answer_recieved' in state:
-            del state['_answer_recieved']
+        if '_answer_received' in state:
+            del state['_answer_received']
         return state
 
     def __setstate__(self, state):
         self.__dict__.update(state)
-        self._answer_recieved = asyncio.Event()
+        self._answer_received = asyncio.Event()
 
     def cancel(self):
         self.answerCall = False
-        self._answer_recieved.set()
+        self._answer_received.set()
 
     async def process(self):
 
@@ -234,7 +233,7 @@ class MessageProcessor:
 
         markup_inline.add(item_yes)
         self.save_data_question_message = await self.bot.send_message(
-            self.user_message.chat.id,
+            self.user_message.chat.id, 
             'If everything is correct press "yes", else tell me what i should change',
             reply_markup=markup_inline,
         )
@@ -259,7 +258,7 @@ class MessageProcessor:
                                                      reply_markup=None)
             await self.bot.delete_message(call.message.chat.id, call.message.message_id)
             self.answerCall = False
-        self._answer_recieved.set()
+        self._answer_received.set()
 
     def build_answer_callback(self):
         @self.bot.callback_query_handler(func=self.filter_callbacks)
@@ -289,7 +288,7 @@ class MessageProcessor:
         )
 
         chat_id = self.user_message.chat.id
-        await self.bot.send_message(chat_id, formatted_message)
+        await self.bot.send_message(chat_id, formatted_message)   
         await self.send_save_buttons()
-        await self._answer_recieved.wait()
+        await self._answer_received.wait()
         return self.answerCall
